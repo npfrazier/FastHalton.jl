@@ -2,51 +2,64 @@ module Halton
 
 using Distributions
 
-export HaltonSequence, HaltonDraws
-
-function Halton_n(i::Int,b::Int64)
-  # Produce the i-th number in Halton sequence
-  # Based off of wikipedia article
-  # i -- index
-  # b -- base
-  r = 0 # result
-  f = 1 # start with unit interval
-  while i>0
-    f = f/b # divide unit interval
-    r = r + f * (i % b)
-    i = floor(i/b)
-  end
-  return r
-end
+export HaltonSeq!, HaltonDraws!
 
 """
-`HaltonSequence(N::Int64,B::Int64, [skip=false,skip_val=100])`
+`HaltonSeq!(H::Array{Float64,1},B::Int64, [skip=0])`
 
-Function to generate `N` entries from the Halton low discrepancy sequence with base `B`.
-Accepts keyword arguments to skip the first `skip_val` entries.
+Fills *H* with entries from Halton low discrepancy sequence with base *B*. Accepts keyword arguments to skip the first *skip* entries.
 
 """
-function HaltonSequence(N::Int64,b::Int64;skip=false,skip_val=100)
+function HaltonSeq!(H::Array{Float64,1},b::Int;skip=0)
+  #
 
-  hs = zeros(N+skip*skip_val)
-  for i in 1:length(hs)
-      hs[i] = Halton_n(i,b)
-  end
-  hs[skip*skip_val+1:end]
+  isprime(B) || error("base number not prime")
+
+  return H[:] = H!(zeros(length(H)+skip),B)[skip+1:end]
 end
 
 
-"""
-`HaltonDraws(N::Int64,B::Int64, [skip=true,skip_val=100])`
 
-Generates `N` draws from a Normal distribution using a Halton sequence with base `B`.
-Uses the inverse cdf to convert the sequence to points along real line.
-Accepts keyword arguments to skip the first `skip_val` entries.
-
-Not optimized. Just convenient.
 """
-function HaltonDraws(N::Int64,b::Int64;skip=true,skip_val=100)
-  Distributions.quantile(Distributions.Normal(),HaltonSequence(N,b,skip=skip,skip_val=skip_val))
+`HaltonDraws!(H::Array{Float64,2},B::Array{Int64,1}, [skip=500,distr=Normal()])`
+
+Fills each column of *H* with entries from Halton low discrepancy sequence with the prime number in the equivalent index in *B*. Accepts keyword arguments to skip the first *skip* entries and to change the Distributions package distribution from the default of *Normal()*.
+
+"""
+function HaltonDraws(H::Array{Float64,2},B::Array{Int64,1}; skip=500,     distr=Normal())
+  Distributions.quantile(Distributions.distr,HaltonSequence(N,b,skip=skip,skip_val=skip_val))
+end
+
+
+## Algorithm for generating Halton sequences
+function H!(H::Array{Float64,1},b::Int)
+  # Fill H with Halton Sequence based on b
+  S = length(H)
+  # set D to get generated seq >= S
+  D = ceil(Int64,log(S)/log(b))
+  # placeholders
+  d = zeros(Float64,D+1)
+  r = zeros(Float64,D+1)
+
+  # based on algorithm found in https://www.researchgate.net/publication/229173824_Fast_portable_and_reliable_algorithm_for_the_calculation_of_Halton_numbers
+  for nn in 1:S
+    ii = 1
+    while d[ii] == b-1
+      d[ii] = 0
+      ii += 1
+    end
+    d[ii] += 1
+    if ii>=2
+      r[ii-1] = (d[ii]+r[ii])/b
+    end
+    if ii >= 3
+      for jj in (ii-1):-1:2
+        r[jj-1] = r[jj]/b
+      end
+    end
+    H[nn] = (d[1]+r[1])/b
+  end
+  return H
 end
 
 end
