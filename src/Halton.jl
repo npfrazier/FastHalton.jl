@@ -7,7 +7,7 @@ export HaltonSeq!, HaltonDraws!
 """
 `HaltonSeq!(H::Array{Float64,1},B::Int64, [skip=0])`
 
-Fills *H* with entries from Halton low discrepancy sequence with base *B*. Accepts keyword arguments to skip the first *skip* entries.
+Replaces *H* with entries from Halton low discrepancy sequence with base *B*. Accepts keyword arguments to set Distributions.*distr* and to discard first *skip* entries.
 
 """
 function HaltonSeq!(H::Array{Float64,1},B::Int;skip=0)
