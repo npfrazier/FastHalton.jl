@@ -10,7 +10,7 @@ export HaltonSeq!, HaltonDraws!
 Fills *H* with entries from Halton low discrepancy sequence with base *B*. Accepts keyword arguments to skip the first *skip* entries.
 
 """
-function HaltonSeq!(H::Array{Float64,1},b::Int;skip=0)
+function HaltonSeq!(H::Array{Float64,1},B::Int;skip=0)
   #
 
   isprime(B) || error("base number not prime")
@@ -18,18 +18,17 @@ function HaltonSeq!(H::Array{Float64,1},b::Int;skip=0)
   return H[:] = H!(zeros(length(H)+skip),B)[skip+1:end]
 end
 
-
-
 """
 `HaltonDraws!(H::Array{Float64,2},B::Array{Int64,1}, [skip=500,distr=Normal()])`
 
 Fills each column of *H* with entries from Halton low discrepancy sequence with the prime number in the equivalent index in *B*. Accepts keyword arguments to skip the first *skip* entries and to change the Distributions package distribution from the default of *Normal()*.
 
 """
-function HaltonDraws(H::Array{Float64,2},B::Array{Int64,1}; skip=500,     distr=Normal())
-  Distributions.quantile(Distributions.distr,HaltonSequence(N,b,skip=skip,skip_val=skip_val))
+function HaltonDraws!(H::Array{Float64,1},B::Int; skip=500,distr=Normal())
+  Distributions.quantile(distr,HaltonSeq!(H,B,skip=skip))
 end
 
+####
 
 ## Algorithm for generating Halton sequences
 function H!(H::Array{Float64,1},b::Int)
