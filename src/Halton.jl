@@ -1,6 +1,7 @@
 module Halton
 
 using Distributions
+using Primes
 
 export HaltonSeq!, HaltonDraws!
 
