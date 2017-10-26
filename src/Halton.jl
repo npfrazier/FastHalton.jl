@@ -28,7 +28,7 @@ Keyword argument `skip` is the number initial "burn-in" elements to drop.
 """
 function HaltonDraws!(H::AbstractArray, B::Int; skip::Int=500, distr = Normal())
   HaltonSeq!(H, B, skip=skip)
-  H .= Distributions.quantile(distr, H)
+  H .= Distributions.quantile.(distr, H)
 end
 
 ####
