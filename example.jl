@@ -4,11 +4,11 @@ using Halton
 
 # First 10 entries in Halton Sequence with base 3
 H = Vector{Float64}(10)
-base = 3
-HaltonSeq!(H, base)
+B = 3
+HaltonSeq!(H, B)
 
 # Skip first 100 entries
-HaltonSeq!(H, base, skip=100)
+HaltonSeq!(H, B, skip=100)
 
 ## Halton Draws
 
