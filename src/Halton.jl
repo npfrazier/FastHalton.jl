@@ -14,9 +14,7 @@ Keyword argument `skip` is the number initial "burn-in" elements to drop.
 """
 function HaltonSeq!(H::AbstractArray{T}, B::Int; skip::Int=500) where {T<:AbstractFloat}
   isprime(B) || error("base number not prime")
-  Hjnk = zeros(T, length(H) + skip)
-  H!(Hjnk, B)
-  vec(H) .= Hjnk[skip + 1 : end]
+  H!(H, B, skip)
 end
 
 """
@@ -34,9 +32,9 @@ end
 ####
 
 ## Algorithm for generating Halton sequences
-function H!(H::AbstractVector{T}, b::I) where {T<:AbstractFloat, I<:Integer}
+function H!(H::AbstractVector{T}, b::I, skip::Int) where {T<:AbstractFloat, I<:Integer}
   # Fill H with Halton Sequence based on b
-  S = length(H)
+  S = skip + length(H)
   # set D to get generated seq >= S
   D = ceil(I, log(S) / log(b))
   # placeholders
@@ -59,7 +57,9 @@ function H!(H::AbstractVector{T}, b::I) where {T<:AbstractFloat, I<:Integer}
         r[jj-1] = r[jj] / b
       end
     end
-    H[nn] = (d[1] + r[1]) / b
+    if nn>skip
+      H[nn-skip] = (d[1] + r[1]) / b
+    end
   end
   return H
 end
