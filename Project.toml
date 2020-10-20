@@ -1,0 +1,8 @@
+name = "Halton"
+uuid = "9dab00a2-2f82-4e57-9eea-3e44eda223b6"
+version = "0.1.0"
+authors = ["Nick Frazier <https://github.com/npfrazier>"]
+
+[deps]
+Distributions
+Primes
