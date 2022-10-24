@@ -7,7 +7,7 @@ export HaltonSeq
 import Base: length, eltype
 
 """
-    HaltonSeq(base, skip, length)
+    HaltonSeq(base, length, skip=5000)
 
 Iterator generates a Halton sequence of `Rational{Int}`s 
 given a prime `base` and `length`, and skipping the first
@@ -24,8 +24,9 @@ struct HaltonSeq
     base::Int
     skip::Int
     length::Int
+    f::Function
     
-    function HaltonSeq(base::Integer, skip::Integer, length::Integer)
+    function HaltonSeq(base::Integer, length::Integer, skip::Integer = 5000, f=identity)
 
         isprime(base) || error("base number not prime")
 
@@ -44,7 +45,7 @@ struct HaltonSeq
             update_halton_remainders!(d,r,base)
         end
         
-        return new(d, r, base, skip, length)
+        return new(d, r, base, skip, length, f)
     end
 end
 
@@ -80,7 +81,8 @@ end
 
 function Base.iterate(H::HaltonSeq, state=1)
     state > length(H) && return nothing
-    return update_halton_remainders!(H.d, H.r, H.base), state+1
+    draw = update_halton_remainders!(H.d, H.r, H.base)
+    return H.f(draw), state+1
 end
 
 
