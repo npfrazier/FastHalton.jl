@@ -2,16 +2,18 @@ module Halton
 
 using Primes
 
-export HaltonSeq
+export HaltonSeq, HaltonSeq!, HaltonDraws!
 
 import Base: length, eltype
 
 """
-    HaltonSeq(base, length, skip=5000)
+    HaltonSeq(base, length, skip=5000, f=identity)
 
 Iterator generates a Halton sequence of `Rational{Int}`s 
 given a prime `base` and `length`, and skipping the first
-`skip` elements.
+`skip` elements. Function `f`, such as `StatsFuns::norminvcdf`,
+can be used to transform a Halton draw into a quasi-random draw
+from a distribution
 
 The algorithm is presented in Kolar & O'Shea (1993),
 <https://doi.org/10.1016/0898-1221(93)90307-H> uses 
@@ -24,9 +26,9 @@ struct HaltonSeq
     base::Int
     skip::Int
     length::Int
-    f::Function
+    invcdf::Function
     
-    function HaltonSeq(base::Integer, length::Integer, skip::Integer = 5000, f=identity)
+    function HaltonSeq(base::Integer, length::Integer, skip::Integer = 5000, invcdf::Function=identity)
 
         isprime(base) || error("base number not prime")
 
@@ -45,7 +47,7 @@ struct HaltonSeq
             update_halton_remainders!(d,r,base)
         end
         
-        return new(d, r, base, skip, length, f)
+        return new(d, r, base, skip, length, invcdf)
     end
 end
 
@@ -82,7 +84,25 @@ end
 function Base.iterate(H::HaltonSeq, state=1)
     state > length(H) && return nothing
     draw = update_halton_remainders!(H.d, H.r, H.base)
-    return H.f(draw), state+1
+    return H.invcdf(draw), state+1
+end
+
+function HaltonSeq!(x::AbstractArray, base, args...)
+    n = length(x)
+    H = HaltonSeq(base, n, args...)
+    copyto!(x, H)
+    return x
+end
+
+function HaltonDraws!(x, b; skip=5000, invcdf=StatsFuns.norminvcdf)
+    Base.depwarn(
+        "# This function is deprecated. "*
+        "Please use `HaltonSeq!(x, b, skip, invdistr)` instead.\n\n " *
+        "NOTE: `invdistr` is NOT `Distributions`, instead it is a " *
+        "function returning the inverse cdf, such as `StatsFuns::norminvcdf`" *
+        "or `(x) -> Distributions.quantile.(Normal(), x)`"
+    , Symbol("HaltonDraws!"); force = true)
+    return HaltonSeq!(x, b, skip, invcdf)
 end
 
 
