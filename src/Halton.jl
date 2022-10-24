@@ -46,21 +46,21 @@ function H!(H, base::Int, skip::Int)
 
   # based on algorithm found in https://www.researchgate.net/publication/229173824_Fast_portable_and_reliable_algorithm_for_the_calculation_of_Halton_numbers
   for nn in 1:S
-    i = 1
+    l = 1
     
-    while d[i] == base-1
-      d[i] = 0
-      i += 1
+    while d[l] == base-1
+      d[l] = 0
+      l += 1
     end
     
-    d[i] += 1
+    d[l] += 1
     
-    if i >= 2
-      r[i-1] = (d[i] + r[i]) // base
+    if l >= 2
+      r[l-1] = (d[l] + r[l]) // base
     end
     
-    if i >= 3
-      for j in (i-1) : -1 : 2
+    if l >= 3
+      for j in (l-1) : -1 : 2
         r[j-1] = r[j] // base
       end
     end
