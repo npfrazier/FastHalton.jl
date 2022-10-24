@@ -45,28 +45,30 @@ function H!(H, base::Int, skip::Int)
   r = zeros(Rational{Int}, D+1)
 
   # based on algorithm found in https://www.researchgate.net/publication/229173824_Fast_portable_and_reliable_algorithm_for_the_calculation_of_Halton_numbers
-  for nn in 1:S
-    l = 1
+  for k in 1:S
+    # Kolar & O'Shea (1993) have 0-based indexing
+    # they use the index "l" here
+    j = 1  
     
-    while d[l] == base-1
-      d[l] = 0
-      l += 1
+    while d[j] == base-1
+      d[j] = 0
+      j += 1
     end
     
-    d[l] += 1
+    d[j] += 1
     
-    if l >= 2
-      r[l-1] = (d[l] + r[l]) // base
+    if j >= 2
+      r[j-1] = (d[j] + r[j]) // base
     end
     
-    if l >= 3
-      for j in (l-1) : -1 : 2
-        r[j-1] = r[j] // base
+    if j >= 3
+      for i in (j-1) : -1 : 2
+        r[i-1] = r[i] // base
       end
     end
     
-    if nn>skip
-      H[nn-skip] = (d[1] + r[1]) // base
+    if k > skip
+      H[k-skip] = (d[1] + r[1]) // base
     end
   
   end
