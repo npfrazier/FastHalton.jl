@@ -1,8 +1,13 @@
 name = "Halton"
-uuid = "93b8ac21-ba3c-4dcb-9f40-eea070e3f6a3"
-authors = ["Nick Frazier <https://github.com/npfrazier>"]
+uuid = "05a64641-4d1a-5311-8c01-b9b6c96c7c05"
 version = "0.1.0"
 
 [deps]
-Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Primes = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+StatsFuns = "4c63d2b9-4356-54db-8cca-17b64c39e42c"
+
+[targets]
+test = ["Test", "StatsFuns"]
