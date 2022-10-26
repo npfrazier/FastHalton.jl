@@ -24,4 +24,4 @@ copyto!(draws3, HaltonSeq(3, m*n))
 
 # could also do
 HaltonSeq!(draws3, 3, 1000)
-HaltonDraws!(draws3, 3; skip=1000, invcdf=StatsFuns.norminvcdf)
+@test_deprecated HaltonDraws!(draws3, 3; skip=1000, invcdf=StatsFuns.norminvcdf)
