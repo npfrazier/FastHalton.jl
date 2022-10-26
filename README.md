@@ -1,18 +1,29 @@
-## HaltonDraws
+## HaltonDraws.jl
 
-Convenient interface for getting Halton Draws from a Normal distribution. Typically need for Monte Carlo integration. These are rough implementations of the code available [Kolář and O'Shea (1993) ](https://doi.org/10.1016/0898-1221(93)90307-H) and make no claim of coding efficiency or deep understanding.
+[![Build Status](https://travis-ci.com/npfrazier/Halton.jl.svg?branch=main)](https://travis-ci.com/npfrazier/Halton.jl)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/npfrazier/Halton.jl?svg=true)](https://ci.appveyor.com/project/npfrazier/Halton-jl)
 
-Exports `HaltonSeq(base, skip, length)`, which is an iterator that returns a sequence of Halton draws of base `b` after discarding `skip` entries. These are returned as `Rational{Int}`s ([HaltonSequences.jl](https://github.com/tobydriscoll/HaltonSequences.jl) does this), and they can be collected into a `Vector{Rational{Int}}`, or copied to an `AbstractArray`, which can have eltypes `Rational` or `AbstractFloat`.
+Convenient interface for getting Halton Draws ~~from a Normal distribution~~ (**Note breaking change below**). Typically need for Monte Carlo integration. These are rough implementations of the code available [Kolář and O'Shea (1993) ](https://doi.org/10.1016/0898-1221(93)90307-H) and make no claim of coding efficiency or deep understanding.
+
+Exports `HaltonSeq(base, skip, length, invcdf=identity)`, which is an iterator that returns a sequence of Halton draws of base `b` after discarding `skip` entries. These are returned as `Rational{Int}`s ([HaltonSequences.jl](https://github.com/tobydriscoll/HaltonSequences.jl) does this), and they can be collected into a `Vector{Rational{Int}}`, or copied to an `AbstractArray`, which can have eltypes `sRational` or `AbstractFloat`. Argument `invcdf` defaults to the `identity` function but can be switched to an inverse CDF to obtain draws from a particular distribution.
+
+**BREAKING CHANGE** The iterator no longer provides draws from a normal distribution -- it just provides the low discrepancy Halton sequence over the interval $(0,1)$. Use the `invcdf` argument to draws from a particular distribution. For example `using StatsFuns: norminvcdf; HaltonSeq(2, 5000, 100, norminvcdf)`
 
 ```julia
+using StatsFuns
+
+BASE = 2
+SKIP = 5000
+LENGTH = 1000
+INVCDF = norminvcdf
 
 # 1000 halton draws of base 2 starting at 1001
-draws2 = collect(HaltonSeq(2, 5000, 1000))
+draws2 = collect(HaltonSeq(BASE, SKIP, LENGTH, INVCDF))
 
 # preallocated
 m,n = 10, 50
 draws3 = Matrix{Float64}(undef, m, n)
-copyto!(draws3, HaltonSeq(3, m*n))
+HaltonSeq!(draws3, BASE, SKIP)
 ```
 
 
