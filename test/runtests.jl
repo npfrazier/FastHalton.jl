@@ -1,4 +1,4 @@
-using Halton
+using FastHalton
 using Test
 using StatsFuns
 
