@@ -1,4 +1,4 @@
-module Halton
+module HaltonSequence
 
 using Primes
 
