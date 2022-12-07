@@ -1,4 +1,4 @@
-module HaltonSequence
+module FastHalton
 
 using Primes
 
