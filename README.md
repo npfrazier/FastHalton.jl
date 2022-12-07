@@ -1,5 +1,7 @@
 ## HaltonSequence.jl
 
+See [this package](https://github.com/tobydriscoll/HaltonSequences.jl) for similar functionality available directly from the Julia Package registry.
+
 [![Build Status](https://travis-ci.com/npfrazier/Halton.jl.svg?branch=main)](https://travis-ci.com/npfrazier/Halton.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/npfrazier/Halton.jl?svg=true)](https://ci.appveyor.com/project/npfrazier/Halton-jl)
 
