@@ -1,11 +1,9 @@
-## HaltonSequence.jl
-
-See [this package](https://github.com/tobydriscoll/HaltonSequences.jl) for similar functionality available directly from the Julia Package registry.
+## FastHalton.jl
 
 [![Build Status](https://travis-ci.com/npfrazier/Halton.jl.svg?branch=main)](https://travis-ci.com/npfrazier/Halton.jl)
 [![Build Status](https://ci.appveyor.com/api/projects/status/github/npfrazier/Halton.jl?svg=true)](https://ci.appveyor.com/project/npfrazier/Halton-jl)
 
-Convenient interface for getting a set of entries from a Halton Sequence. Typically needed for Monte Carlo integration. These are rough implementations of the code available [Kolář and O'Shea (1993) ](https://doi.org/10.1016/0898-1221(93)90307-H) and make no claim of coding efficiency or deep understanding.
+Convenient interface for getting a set of entries from a Halton Sequence. Typically needed for Monte Carlo integration. These are rough implementations of the code available [Kolář and O'Shea (1993) ](https://doi.org/10.1016/0898-1221(93)90307-H) and make no claim of coding efficiency or deep understanding. This package implements that algorithm which provides a substantial improvement in computational speed relative to existing packages (e.g. [HaltonSequences.jl](https://github.com/tobydriscoll/HaltonSequences.jl)).
 
 Exports `HaltonSeq(base, skip, length, invcdf=identity)`, which is an iterator that returns a sequence of Halton draws of base `b` after discarding `skip` entries. These are returned as `Rational{Int}`s ([HaltonSequences.jl](https://github.com/tobydriscoll/HaltonSequences.jl) does this), and they can be collected into a `Vector{Rational{Int}}`, or copied to an `AbstractArray`, which can have eltypes `sRational` or `AbstractFloat`. Argument `invcdf` defaults to the `identity` function but can be switched to an inverse CDF to obtain draws from a particular distribution.
 
