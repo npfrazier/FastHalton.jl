@@ -1,4 +1,4 @@
-name = "HaltonSequence"
+name = "FastHalton"
 uuid = "05a64641-4d1a-5311-8c01-b9b6c96c7c05"
 version = "0.1.0"
 
